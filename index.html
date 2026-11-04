@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>คุณคือสาหร่ายแซนวิชรสอะไร?</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Mitr:wght@400;600&family=Sarabun:wght@400;600&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<style>
+:root{
+  --bg:#F5EDD8;          /* puffed rice */
+  --ink:#1F2B20;         /* nori */
+  --ink-soft:#4A5547;
+  --surface:#FFFFFF;
+  --line:#1F2B20;
+  --nori:#1F2B20;
+  --rice:#F5EDD8;
+  --chosen:#1F2B20;
+  --chosen-ink:#F5EDD8;
+  --accent:#E9A23B;
+  --card-ink:#F5EDD8;
+  --card-nori:#1F2B20;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark){
+  :root{
+    --bg:#162017;
+    --ink:#F5EDD8;
+    --ink-soft:#BFC4B2;
+    --surface:#223024;
+    --line:#F5EDD8;
+    --chosen:#F5EDD8;
+    --chosen-ink:#162017;
+    color-scheme: dark;
+  }
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{
+  font-family:"Sarabun",system-ui,sans-serif;
+  background:var(--bg);color:var(--ink);
+  min-height:100vh;display:flex;justify-content:center;
+  -webkit-tap-highlight-color:transparent;
+}
+main{width:100%;max-width:440px;padding:28px 20px 40px}
+h1,h2,.display{font-family:"Mitr","Sarabun",sans-serif;font-weight:600;line-height:1.2}
+
+/* the sandwich mark: nori / rice / nori */
+.sandwich{width:100%;border-radius:14px;overflow:hidden;border:2px solid var(--line)}
+.sandwich .nori{height:22px;background:var(--nori);
+  background-image:repeating-linear-gradient(100deg,rgba(255,255,255,.05) 0 3px,transparent 3px 9px)}
+.sandwich .rice{height:46px;background-color:var(--rice);
+  background-image:radial-gradient(circle at 30% 40%,#fff 0 3px,transparent 4px),
+                   radial-gradient(circle at 70% 60%,#E6D7B0 0 3px,transparent 4px);
+  background-size:14px 12px,17px 15px}
+
+/* start */
+#start .sandwich{margin:8px 0 28px}
+#start h1{font-size:2.3rem;margin-bottom:14px}
+#start p{color:var(--ink-soft);font-size:1.05rem;line-height:1.6;margin-bottom:28px}
+.flavor-row{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:32px}
+.flavor-row span{font-size:.9rem;padding:4px 12px;border-radius:999px;border:1.5px solid var(--line)}
+
+.btn{
+  display:block;width:100%;font-family:"Mitr",sans-serif;font-size:1.1rem;
+  padding:16px;border-radius:14px;border:2px solid var(--line);
+  background:var(--chosen);color:var(--chosen-ink);cursor:pointer;
+}
+.btn.ghost{background:transparent;color:var(--ink);margin-top:10px}
+.btn:focus-visible,.opt:focus-visible{outline:3px solid var(--accent);outline-offset:3px}
+
+/* quiz */
+.progress{display:flex;gap:4px;margin-bottom:10px}
+.progress i{flex:1;height:8px;border-radius:4px;border:1.5px solid var(--line);background:transparent;transition:background .25s}
+.progress i.done{background:var(--ink)}
+.count{font-size:.95rem;color:var(--ink-soft);margin-bottom:26px}
+#qText{font-size:1.6rem;margin-bottom:24px;min-height:3.9rem}
+.opts{display:flex;flex-direction:column;gap:10px}
+.opt{
+  text-align:left;font-family:"Sarabun",sans-serif;font-size:1.08rem;line-height:1.45;
+  padding:15px 18px;border-radius:14px;border:2px solid var(--line);
+  background:var(--surface);color:var(--ink);cursor:pointer;transition:transform .12s,background .15s;
+}
+.opt:active{transform:scale(.98)}
+.opt.picked{background:var(--chosen);color:var(--chosen-ink)}
+.back{background:none;border:none;color:var(--ink-soft);font-family:inherit;font-size:.95rem;margin-top:22px;cursor:pointer;text-decoration:underline}
+
+/* result: the story card (fixed 9:16, same in both modes because it becomes an image) */
+#result{display:flex;flex-direction:column;align-items:center}
+.card-wrap{width:100%;max-width:360px}
+#card{
+  width:360px;height:640px;max-width:100%;
+  background:var(--flavor);color:var(--card-nori);
+  border-radius:20px;overflow:hidden;position:relative;
+  display:flex;flex-direction:column;
+}
+#card .top{padding:30px 26px 0}
+#card .kicker{font-family:"Mitr",sans-serif;font-size:1rem;opacity:.85}
+#card .name{font-family:"Mitr",sans-serif;font-weight:600;font-size:3.1rem;line-height:1.05;margin:6px 0 4px}
+#card .tag{font-family:"Mitr",sans-serif;font-size:1.05rem}
+#card .stack{margin:22px 26px 0;border-radius:14px;overflow:hidden;border:2.5px solid var(--card-nori)}
+#card .stack .nori{height:26px;background:var(--card-nori)}
+#card .stack .rice{height:88px;display:flex;align-items:center;justify-content:center;font-size:3.2rem;
+  background-color:var(--card-ink);
+  background-image:radial-gradient(circle at 30% 40%,#fff 0 3px,transparent 4px),
+                   radial-gradient(circle at 70% 60%,#E6D7B0 0 3px,transparent 4px);
+  background-size:14px 12px,17px 15px}
+#card .desc{padding:20px 26px 0;font-size:1.02rem;line-height:1.55}
+#card .traits{display:flex;flex-wrap:wrap;gap:6px;padding:14px 26px 0}
+#card .traits span{font-size:.88rem;padding:3px 11px;border-radius:999px;border:1.5px solid var(--card-nori)}
+#card .foot{margin-top:auto;background:var(--card-nori);color:var(--card-ink);padding:16px 26px;
+  display:flex;justify-content:space-between;align-items:center;font-size:.92rem}
+#card .foot b{font-family:"Mitr",sans-serif;font-weight:400}
+
+.actions{width:100%;max-width:360px;margin-top:20px}
+.note{font-size:.85rem;color:var(--ink-soft);text-align:center;margin-top:18px;line-height:1.5}
+
+/* save overlay */
+#overlay{position:fixed;inset:0;background:rgba(0,0,0,.82);display:none;flex-direction:column;align-items:center;justify-content:center;padding:20px;z-index:10}
+#overlay.show{display:flex}
+#overlay img{max-height:72vh;max-width:100%;border-radius:14px}
+#overlay p{color:#F5EDD8;margin:14px 0;text-align:center}
+#overlay .row{display:flex;gap:10px;width:100%;max-width:360px}
+#overlay .row a,#overlay .row button{flex:1;text-align:center;text-decoration:none;font-family:"Mitr",sans-serif;
+  padding:13px;border-radius:12px;border:2px solid #F5EDD8;background:#F5EDD8;color:#1F2B20;font-size:1rem;cursor:pointer}
+#overlay .row button{background:transparent;color:#F5EDD8}
+
+.hidden{display:none!important}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<main>
+
+  <section id="start">
+    <div class="sandwich" aria-hidden="true"><div class="nori"></div><div class="rice"></div><div class="nori"></div></div>
+    <h1>ถ้าคุณเป็นสาหร่ายแซนวิช คุณคือรสอะไร?</h1>
+    <p>ตอบ 7 ข้อแบบไม่ต้องคิดเยอะ แล้วรับการ์ดผลลัพธ์ไปลงสตอรี่</p>
+    <div class="flavor-row" aria-label="รสทั้งหมด">
+      <span>ไข่เค็ม</span><span>วาซาบิ</span><span>หม่าล่า</span><span>มะเขือเทศ</span><span>ศรีราชา</span><span>บะหมี่เกาหลี</span>
+    </div>
+    <button class="btn" id="go">เริ่มทำแบบทดสอบ</button>
+  </section>
+
+  <section id="quiz" class="hidden">
+    <div class="progress" id="progress"></div>
+    <div class="count" id="count"></div>
+    <h2 id="qText"></h2>
+    <div class="opts" id="opts"></div>
+    <button class="back" id="back">ย้อนกลับ</button>
+  </section>
+
+  <section id="result" class="hidden">
+    <div class="card-wrap">
+      <div id="card">
+        <div class="top">
+          <div class="kicker">ฉันคือสาหร่ายแซนวิชรส</div>
+          <div class="name" id="rName"></div>
+          <div class="tag" id="rTag"></div>
+        </div>
+        <div class="stack"><div class="nori"></div><div class="rice" id="rEmoji"></div><div class="nori"></div></div>
+        <div class="desc" id="rDesc"></div>
+        <div class="traits" id="rTraits"></div>
+        <div class="foot"><span>คู่หูที่เข้ากันสุด</span><b id="rMatch"></b></div>
+      </div>
+    </div>
+    <div class="actions">
+      <button class="btn" id="share">แชร์ไป IG สตอรี่</button>
+      <button class="btn ghost" id="save">บันทึกรูป</button>
+      <button class="btn ghost" id="again">ทำใหม่อีกครั้ง</button>
+    </div>
+    <p class="note">แบบทดสอบนี้ทำขึ้นเพื่อความสนุก ไม่ได้เกี่ยวข้องกับแบรนด์อย่างเป็นทางการ</p>
+  </section>
+
+</main>
+
+<div id="overlay" role="dialog" aria-label="รูปผลลัพธ์">
+  <img id="shot" alt="การ์ดผลลัพธ์">
+  <p>กดค้างที่รูปเพื่อบันทึก แล้วนำไปลงสตอรี่ได้เลย</p>
+  <div class="row">
+    <a id="dl" download="my-flavor.png">ดาวน์โหลด</a>
+    <button id="close">ปิด</button>
+  </div>
+</div>
+
+<script>
+const FLAVORS = {
+  egg:{name:"ไข่เค็ม",tag:"อบอุ่น เข้ากับทุกคน",emoji:"🥚",color:"#F2B33D",
+    desc:"คุณคือคนที่ใครอยู่ใกล้แล้วสบายใจ ไม่ต้องหวือหวาก็มีเสน่ห์ เพื่อนชอบมาปรึกษาเพราะคุณฟังเก่งและไม่ตัดสินใคร",
+    traits:["ใจดี","ฟังเก่ง","เซฟโซนของเพื่อน"],match:"มะเขือเทศ"},
+  wasabi:{name:"วาซาบิ",tag:"พูดตรง แต่จริงใจ",emoji:"🌿",color:"#9CCB6B",
+    desc:"คุณพูดน้อยแต่โดนทุกคำ เจอครั้งแรกอาจดูแรง แต่คนที่รู้จักจะรู้ว่าทุกคำพูดมาจากความหวังดีล้วนๆ",
+    traits:["ตรงไปตรงมา","คม","ไม่อ้อมค้อม"],match:"ไข่เค็ม"},
+  mala:{name:"หม่าล่า",tag:"พลังล้น ชวนลุยตลอด",emoji:"🌶️",color:"#E4573D",
+    desc:"คุณคือตัวจุดไฟของแก๊ง ชอบลองของใหม่ ไม่กลัวความท้าทาย อยู่ใกล้คุณแล้วชีวิตไม่เคยน่าเบื่อ",
+    traits:["กล้าได้กล้าเสีย","สายลุย","พลังงานเต็มร้อย"],match:"บะหมี่เกาหลี"},
+  tomato:{name:"มะเขือเทศ",tag:"สดใส มองโลกแง่บวก",emoji:"🍅",color:"#F07A6A",
+    desc:"คุณคือคนที่ทำให้บรรยากาศเบาลงเสมอ ขี้เล่น กวนนิดๆ แต่พอเพื่อนเศร้า คุณคือคนแรกที่ทำให้ยิ้มได้",
+    traits:["ร่าเริง","ขี้เล่น","ตัวสร้างเสียงหัวเราะ"],match:"ไข่เค็ม"},
+  sriracha:{name:"ศรีราชา",tag:"มั่นใจ มีสไตล์ของตัวเอง",emoji:"🔥",color:"#D9452B",
+    desc:"คุณรู้ว่าตัวเองชอบอะไร มีเป้าหมายชัด ไปที่ไหนก็มีคนจำได้ แต่ยังติดดินและเป็นตัวเองเสมอ",
+    traits:["มั่นใจ","มีเป้าหมาย","ไปได้ทุกที่"],match:"วาซาบิ"},
+  ramyeon:{name:"บะหมี่เกาหลี",tag:"สายติดเทรนด์ ฟินกับของกินดึกๆ",emoji:"🍜",color:"#F4C95D",
+    desc:"คุณตามทุกซีรีส์ รู้ทุกเทรนด์ก่อนใคร และเป็นเพื่อนที่ชวนดูหนังแล้วต้มมาม่ากินด้วยกันตอนเที่ยงคืน",
+    traits:["ติดซีรีส์","รู้เทรนด์ก่อนใคร","สายกินดึก"],match:"หม่าล่า"}
+};
+
+const QUESTIONS = [
+  {q:"วันหยุดแบบไหนคือที่สุด?",o:[
+    ["นอนกลิ้งดูซีรีส์ทั้งวัน",{ramyeon:2,egg:1}],
+    ["ไปคาเฟ่กับแก๊งเพื่อน",{tomato:2,egg:1}],
+    ["ไปที่ใหม่ที่ยังไม่เคยไป",{mala:2,sriracha:1}],
+    ["ใช้เวลากับตัวเองเงียบๆ",{sriracha:2,wasabi:1}]]},
+  {q:"เพื่อนมาปรึกษาเรื่องหนักใจ คุณจะ...",o:[
+    ["กอดก่อน แล้วค่อยฟัง",{egg:2,tomato:1}],
+    ["บอกตรงๆ ว่าควรทำยังไง",{wasabi:2,sriracha:1}],
+    ["ลากไปกินของเผ็ดให้ลืม",{mala:2,ramyeon:1}],
+    ["ชวนดูหนังเศร้าแล้วร้องไห้ด้วยกัน",{ramyeon:2,tomato:1}]]},
+  {q:"เพื่อนมักพูดถึงคุณว่า...",o:[
+    ["อบอุ่นที่สุดในแก๊ง",{egg:2}],
+    ["ปากจัดแต่ใจดี",{wasabi:2,mala:1}],
+    ["ลุยไม่หยุด ชวนอะไรไปหมด",{mala:2,sriracha:1}],
+    ["สดใสจนแสบตา",{tomato:2,ramyeon:1}]]},
+  {q:"ตีหนึ่งแล้ว ตอนนี้คุณกำลัง...",o:[
+    ["หลับไปนานแล้ว",{egg:2,tomato:1}],
+    ["ต้มมาม่า ดูซีรีส์ตอนต่อไป",{ramyeon:3}],
+    ["ยังอยู่ข้างนอกกับเพื่อน",{mala:2,sriracha:1}],
+    ["นั่งทำโปรเจกต์ของตัวเอง",{sriracha:2,wasabi:1}]]},
+  {q:"สไตล์แต่งตัวของคุณ",o:[
+    ["ใส่สบาย โทนอุ่นๆ",{egg:2}],
+    ["มินิมอล เรียบแต่คม",{wasabi:2,sriracha:1}],
+    ["สีสด ลายเยอะ ยิ่งปังยิ่งดี",{tomato:2,mala:1}],
+    ["สตรีท ตามเทรนด์",{ramyeon:2,sriracha:1}]]},
+  {q:"ถ้าได้บินไปเที่ยวพรุ่งนี้เลย",o:[
+    ["เมืองเล็กริมทะเล เงียบๆ",{egg:2,wasabi:1}],
+    ["โซล ตามรอยซีรีส์",{ramyeon:2,tomato:1}],
+    ["ฉงชิ่ง ตะลุยของเผ็ด",{mala:3}],
+    ["หลายประเทศรวดเดียว",{sriracha:3}]]},
+  {q:"ในกรุ๊ปแชท คุณคือคนที่...",o:[
+    ["ส่งสติกเกอร์น่ารักปลอบใจ",{tomato:2,egg:1}],
+    ["ตอบสั้นแต่จุก",{wasabi:3}],
+    ["ชวนเที่ยวตลอดเวลา",{mala:2,sriracha:1}],
+    ["ส่งมีมก่อนใคร",{ramyeon:2,tomato:1}]]}
+];
+
+const $ = id => document.getElementById(id);
+let step = 0, answers = [];
+
+function show(id){
+  ["start","quiz","result"].forEach(s => $(s).classList.toggle("hidden", s !== id));
+  window.scrollTo(0,0);
+}
+
+function renderQ(){
+  const Q = QUESTIONS[step];
+  $("progress").innerHTML = QUESTIONS.map((_,i)=>`<i class="${i<step?'done':''}"></i>`).join("");
+  $("count").textContent = `ข้อ ${step+1} จาก ${QUESTIONS.length}`;
+  $("qText").textContent = Q.q;
+  $("opts").innerHTML = "";
+  Q.o.forEach(([label],i)=>{
+    const b = document.createElement("button");
+    b.className = "opt" + (answers[step]===i ? " picked" : "");
+    b.textContent = label;
+    b.onclick = () => pick(i, b);
+    $("opts").appendChild(b);
+  });
+  $("back").classList.toggle("hidden", step === 0);
+}
+
+function pick(i, btn){
+  answers[step] = i;
+  btn.classList.add("picked");
+  setTimeout(()=>{
+    if (step < QUESTIONS.length - 1){ step++; renderQ(); }
+    else showResult();
+  }, 220);
+}
+
+function showResult(){
+  const score = {};
+  Object.keys(FLAVORS).forEach(k => score[k] = 0);
+  answers.forEach((a,i)=>{
+    const w = QUESTIONS[i].o[a][1];
+    for (const k in w) score[k] += w[k];
+  });
+  const top = Math.max(...Object.values(score));
+  const tied = Object.keys(score).filter(k => score[k] === top);
+  const key = tied[answers.reduce((s,a)=>s+a,0) % tied.length];
+  const f = FLAVORS[key];
+
+  $("card").style.setProperty("--flavor", f.color);
+  $("rName").textContent = f.name;
+  $("rTag").textContent = f.tag;
+  $("rEmoji").textContent = f.emoji;
+  $("rDesc").textContent = f.desc;
+  $("rTraits").innerHTML = f.traits.map(t=>`<span>${t}</span>`).join("");
+  $("rMatch").textContent = "รส" + f.match;
+  $("card").dataset.key = key;
+  show("result");
+  prepareImage();
+}
+
+/* Render the card ahead of time, so the share button can open
+   the share sheet instantly (phones block sharing after a delay). */
+let imgURL = null, imgFile = null, imgReady = null;
+
+function prepareImage(){
+  imgURL = null; imgFile = null;
+  $("share").textContent = "กำลังเตรียมรูป...";
+  imgReady = (async () => {
+    if (document.fonts && document.fonts.ready) await document.fonts.ready;
+    const canvas = await html2canvas($("card"), {scale:3, backgroundColor:null, useCORS:true});
+    imgURL = canvas.toDataURL("image/png");
+    const blob = await new Promise(r => canvas.toBlob(r, "image/png"));
+    imgFile = new File([blob], "my-koriko-flavor.png", {type:"image/png"});
+  })().catch(()=>{}).finally(()=>{ $("share").textContent = "แชร์ไป IG สตอรี่"; });
+}
+
+function openOverlay(){
+  if (!imgURL){ alert("สร้างรูปไม่สำเร็จ ลองแคปหน้าจอการ์ดแทนได้เลย"); return; }
+  $("shot").src = imgURL;
+  $("dl").href = imgURL;
+  $("overlay").classList.add("show");
+}
+
+async function shareIG(){
+  if (!imgFile){ await imgReady; }
+  const data = { files:[imgFile], title:"ฉันคือสาหร่ายแซนวิชรส" + $("rName").textContent };
+  if (imgFile && navigator.canShare && navigator.canShare({files:[imgFile]})){
+    try{ await navigator.share(data); }
+    catch(e){ if (e.name !== "AbortError") openOverlay(); }
+  } else {
+    openOverlay(); // this browser can't share files: save the image instead
+  }
+}
+
+async function saveImage(){
+  if (!imgURL) await imgReady;
+  openOverlay();
+}
+
+$("go").onclick = () => { step = 0; answers = []; show("quiz"); renderQ(); };
+$("back").onclick = () => { if (step > 0){ step--; renderQ(); } };
+$("again").onclick = () => { step = 0; answers = []; show("quiz"); renderQ(); };
+$("save").onclick = saveImage;
+$("share").onclick = shareIG;
+$("close").onclick = () => $("overlay").classList.remove("show");
+</script>
+</body>
+</html>
